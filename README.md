@@ -1,6 +1,6 @@
-# HTTP server in C
+# Spectre proof of concept on Heroku
 
-A minimal HTTP server, written in C by [Jan Ahrens](https://github.com/JanAhrens/ipconfig-http-server). I've modified it to work as a general-purpose HTTP server.
+The C implementation of a simple spectre attack by [Eugnis](https://github.com/Eugnis/spectre-attack). I've added a http server and directed the log output to the browser.
 
 The C script is compiled using the Heroku C buildpack. Once you've created an app with the C [buildpack](https://github.com/heroku/heroku-buildpack-c), you can...
 
