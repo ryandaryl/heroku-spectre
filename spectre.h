@@ -111,7 +111,7 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2])
 	score[1] = results[k];
 }
 
-int main(int argc, const char* * argv)
+int spectre(int argc, const char* * argv)
 {
 	printf("Putting '%s' in memory\n", secret);
 	size_t malicious_x = (size_t)(secret - (char *)array1); /* default for malicious_x */
