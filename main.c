@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include "ipaddress.h"
 #include "spectre.h"
 
 void send_response(FILE *f, char *key, char *value) {
@@ -55,11 +54,31 @@ void accept_client(int sock) {
 
   f = fdopen(client_sock, "w+");
 
-  // send_response(f, "myaddress", get_ip_address(f));
-  
-  spectre();
-  send_response(f, "status", "Done.");
+  // Redirect printf logs to text file.
+  char* logfile = "output.txt";
+  freopen(logfile, "w", stdout);
 
+  spectre();
+
+  // Read contents of logfile.
+  
+  char * buffer = 0;
+  long length;
+  FILE * fp = fopen (logfile, "rb");
+  if (fp)
+  {
+    fseek (fp, 0, SEEK_END);
+    length = ftell (fp);
+    fseek (fp, 0, SEEK_SET);
+    buffer = malloc (length);
+    if (buffer)
+    {
+      fread (buffer, 1, length, fp);
+    }
+    fclose (fp);
+  }
+  
+  send_response(f, "output", buffer);
   fclose(f);
 
   // stdout needs to be flushed in order for heroku to read the logs
