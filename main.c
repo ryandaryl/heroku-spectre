@@ -9,13 +9,6 @@
 #include <signal.h>
 #include "spectre.h"
 
-void send_response(FILE *f, char *key, char *value) {
-  fprintf(f, "HTTP/1.1 200 OK\r\n");
-  fprintf(f, "Content-Type: application/json\r\n");
-  fprintf(f, "\r\n");
-  fprintf(f, "{\"%s\": \"%s\"}", key, value);
-}
-
 int open_connection(int port) {
   int sock;
   struct sockaddr_in addr_in;
@@ -52,33 +45,28 @@ void accept_client(int sock) {
     exit(EXIT_FAILURE);
   }
 
-  f = fdopen(client_sock, "w+");
-
   // Redirect printf logs to text file.
   char* logfile = "output.txt";
   freopen(logfile, "w", stdout);
 
   spectre();
 
-  // Read contents of logfile.
-  
-  char * buffer = 0;
-  long length;
-  FILE * fp = fopen (logfile, "rb");
-  if (fp)
-  {
-    fseek (fp, 0, SEEK_END);
-    length = ftell (fp);
-    fseek (fp, 0, SEEK_SET);
-    buffer = malloc (length);
-    if (buffer)
-    {
-      fread (buffer, 1, length, fp);
-    }
-    fclose (fp);
+  // Read contents of logfile and return HTTP response.
+
+  f = fdopen(client_sock, "w+");
+  FILE *fp;
+  fp = fopen(logfile, "r");
+  char buff[255];
+  fprintf(f, "HTTP/1.1 200 OK\r\n");
+  fprintf(f, "Content-Type: application/json\r\n");
+  fprintf(f, "\r\n");
+  fprintf(f, "{\"%s\": \"", "ouput");
+  for (int i = 0; i < 36; i++) {
+    fgets(buff, 255, (FILE*)fp);
+    fprintf(f, "%s", buff);
   }
-  
-  send_response(f, "output", buffer);
+  fprintf(f, "\"}");
+  remove(logfile);
   fclose(f);
 
   // stdout needs to be flushed in order for heroku to read the logs
